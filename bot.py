@@ -26,8 +26,8 @@ WEEKLY_SCHEDULE = [
 
 def get_week_occurrence(weekday: int, hour: int, minute: int) -> int:
     """
-    Return the UNIX timestamp for THIS WEEK's (Mon-Sun) weekday+time,
-    interpreting the time in SCHEDULE_TZ, then converting to UTC.
+    Return the UNIX timestamp for the *next* occurrence of the given weekday+time.
+    If this week's time has already passed, use next week instead.
     """
     tz = ZoneInfo(SCHEDULE_TZ)
 
@@ -40,16 +40,14 @@ def get_week_occurrence(weekday: int, hour: int, minute: int) -> int:
     target_local = (start_of_week_local + timedelta(days=weekday)).replace(
         hour=hour, minute=minute, second=0, microsecond=0
     )
-    # Convert to UTC for the Discord timestamp epoch
+
+    # If the target time has already passed, add 7 days
+    if target_local < now_local:
+        target_local += timedelta(days=7)
+
+    # Convert to UTC for Discord timestamp
     target_utc = target_local.astimezone(timezone.utc)
     return int(target_utc.timestamp())
-
-def build_schedule_message() -> str:
-    lines = [f"📅 **This Week’s Schedule:** *(times shown in your local time)*"]
-    for weekday, hour, minute in WEEKLY_SCHEDULE:
-        ts = get_week_occurrence(weekday, hour, minute)
-        lines.append(f"- <t:{ts}:F>")
-    return "\n".join(lines)
 
 @bot.event
 async def on_ready():
