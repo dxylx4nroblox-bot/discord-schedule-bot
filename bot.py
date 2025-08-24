@@ -17,7 +17,7 @@ WEEKLY_SCHEDULE = [
     (0, 19, 0),  # Monday 19:00
     (2, 16, 0),  # Wednesday 16:00
     (4, 22, 0),  # Friday 22:00
-    (6, 13, 0),  # Sunday 13:00
+    (6, 18, 0),  # Sunday 13:00
 ]
 
 # ----------------- helper functions -----------------
